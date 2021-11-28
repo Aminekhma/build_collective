@@ -165,6 +165,8 @@ contract BuildCollective is Ownable {
 
 
   //ajout d'un beug a notre projet
+  //cette partie des bugs a était tester sur un éditeur spécial pour les tests units eutheruim
+  //par contre on n'a pas eu le temps de faire un front avec des transaction
   function addBug(string memory _title, string memory _description, uint256 _reward, uint256 _bugid) public{
     require(users[msg.sender].registered, "utilisateur introuvable");
     require(users[msg.sender].balance >= _reward, "pas assez d'argent dans le compte");
@@ -200,5 +202,18 @@ contract BuildCollective is Ownable {
     bugs[msg.sender][_idx].fix = bugs[msg.sender][_idx].proposals[trouverIndex(bugs[msg.sender][_idx].proposers, _proposer)];
     users[_proposer].balance += bugs[msg.sender][_idx].reward;
   }
+
+   // une nouvelle adresse
+   function getUniqueId() public view returns (address) 
+    {
+
+        bytes20 b = bytes20(keccak256(msg.sender, now));
+        uint addr = 0;
+        for (uint index = b.length-1; index+1 > 0; index--) {
+            addr += uint(b[index]) * ( 16 ** ((b.length - index - 1) * 2));
+        }
+
+        return address(addr);
+    }
 
 }

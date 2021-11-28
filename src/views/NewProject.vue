@@ -54,11 +54,10 @@ export default defineComponent({
       this.$router.push({name : "SignIn"})
     },
     async submit() {
-      const {contract, address  } = this
+      const {contract, address } = this
       const nameO = this.ProjectName.trim().replace(/ /g, '_')
       const balanceO = (!this.balanceOrg)? 0 : this.balanceOrg;
       await contract.methods.addProject(nameO, address,this.contributors,balanceO).send()
-      
       this.ProjectName = ''
     },
   },

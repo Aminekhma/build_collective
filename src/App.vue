@@ -10,6 +10,9 @@
     <div class="navbar-items">
       <router-link to="/accountOrg" class="navbar-item">AccountOrg</router-link>
     </div>
+    <div class="navbar-items">
+      <router-link to="/accountMembers" class="navbar-item">AccountMembers</router-link>
+    </div>
   </nav>
   <router-view />
 </template>

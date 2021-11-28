@@ -2,21 +2,17 @@
   <div class="home">
     <form id="signup-from" style="border:1px solid #ccc">
       <div class="container">
-            <h1> Création d'entreprise </h1>
+            <h1> Ajouter des members </h1>
             <p> veuillez saisir les informations </p>
 
             <label for="name"><b>Name</b></label>
-            <input type="text" v-model="nameOrg" placeholder = "Organisation name" name="name"/>
-
-            <label for="balance"><b>Balance</b></label>
-            <input type="number" v-model="balanceOrg" min=0 placeholder = "Balance default" balance = "balance"/>
+            <input type="text" v-model="nameMembers" placeholder = "Members name" name="name"/>
 
             <div class="clearfix">
                 <button type="button" class="cancel" @click="goBack()">Cancel</button>
                 <button type="button" class="SignUp" @click="submit()">Sign Up</button>
             </div>
 
-          
 
 
           
@@ -39,38 +35,22 @@ export default defineComponent({
   },
   data() {
     const account = null
-    const nameOrg = ''
-    const balanceOrg = 0
-    const members :any[] = []
-    const a : any[] = []
-    return { account, nameOrg, balanceOrg, members, a }
+    const nameMembers = ''
+    return { account, nameMembers }
   },
   methods: {
     async updateAccount() {
       const {contract, address } = this
       this.account = await contract.methods.org(address).call()
     },
-    async printUsers() {
-      const {contract, address } = this
-      var m = await Promise.resolve(contract.methods.getMaListeOrg(address));
-      console.log(m)
-
-    },
-    async addTokens() {
-      const { contract } = this
-      await contract.methods.addBalance(200).send()
-      await this.updateAccount()
-    },
     async goBack() {
       this.$router.push({name : "SignIn"})
     },
     async submit() {
       const {contract, address  } = this
-      const nameO = this.nameOrg.trim().replace(/ /g, '_')
-      const balanceO = (!this.balanceOrg)? 0 : this.balanceOrg;
-      this.members.push(address)
-      await contract.methods.orgSignUp(nameO, address,this.members,balanceO).send()
-      this.nameOrg = ''
+      const nameO = this.nameMembers.trim().replace(/ /g, '_')
+      await contract.methods.addMember(contract.methods.getUniqueId()).send()
+      this.nameMembers = ''
     },
   },
 

@@ -32,7 +32,7 @@
 
      <card v-if="address" title="Create a entreprise account">
       <collective-button :transparent="true" @click="goToAccountOrg">
-        Go to creation page
+        Go to creation entreprise account
       </collective-button>
     </card>
 
@@ -41,7 +41,22 @@
 
     <card v-if="address" title="Create a project">
       <collective-button :transparent="true" @click="goToNewProj">
-        Go to creation Page
+        Go to creation project
+      </collective-button>
+    </card>
+
+   <spacer :size="24" />
+
+     <card v-if="address" title="Ajouter des membres a l'entreprise">
+      <collective-button :transparent="true" @click="goToMembers">
+        Add membres
+      </collective-button>
+    </card>
+<spacer :size="24" />
+
+    <card v-if="address" title="Ajouter un contributeur">
+      <collective-button :transparent="true" @click="goToCount">
+        Add contributors
       </collective-button>
     </card>
 
@@ -87,6 +102,12 @@ export default defineComponent({
     },
     goToNewProj() {
       this.$router.push({ name: 'NewProject' })
+    },
+    goToMembers() {
+      this.$router.push({ name: 'AccountMembers' })
+    },
+    goToCount() {
+      this.$router.push({ name: 'AccountContributor' })
     },
     
     

@@ -23,6 +23,17 @@ const routes: Array<RouteRecordRaw> = [
     name: 'NewProject',
     component: () => import('@/views/NewProject.vue'),
   },
+  {
+    path: '/accountMembers',
+    name: 'AccountMembers',
+    component: () => import('@/views/AccountMembers.vue'),
+  },
+
+  {
+    path: '/accountContributor',
+    name: 'AccountContributor',
+    component: () => import('@/views/AccountContributor.vue'),
+  },
 ]
 
 const router = createRouter({
