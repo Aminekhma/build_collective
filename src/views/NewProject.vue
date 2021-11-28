@@ -43,7 +43,7 @@ export default defineComponent({
   methods: {
     async updateAccount() {
       const { address, contract } = this
-      this.account = await contract.methods.user(address).call()
+      this.account = await contract.methods.project(address).call()
     },
     async addTokens() {
       const { contract } = this

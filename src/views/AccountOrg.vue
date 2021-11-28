@@ -49,11 +49,11 @@ export default defineComponent({
   methods: {
     async updateAccount() {
       const {contract, address } = this
-      this.account = await contract.methods.getUser(address).call()
+      this.account = await contract.methods.org(address).call()
     },
     async printUsers() {
       const {contract, address } = this
-      var m = await contract.methods.getProjectRefs(address);
+      var m = await contract.methods.getMaListeProject(address);
       for(var i= 0; i < m.length; i++){
         console.log(m[i])
         console.log("z")

@@ -60,7 +60,7 @@ export default defineComponent({
   methods: {
     async updateAccount() {
       const { address, contract } = this
-      this.account = await contract.methods.getUser(address).call()
+      this.account = await contract.methods.user(address).call()
     },
     async signUp() {
       const { contract, username } = this
@@ -78,7 +78,7 @@ export default defineComponent({
   },
   async mounted() {
     const { address, contract } = this
-    const account = await contract.methods.getUser(address).call()
+    const account = await contract.methods.user(address).call()
     if (account.registered) this.account = account
   },
 })

@@ -10,7 +10,7 @@ contract BuildCollective is Ownable {
     bool registered;
   }
 
-  struct Org{
+  struct Organisation{
     string name;
     address owner;
     address[] members;
@@ -21,139 +21,153 @@ contract BuildCollective is Ownable {
     string title;
     string description;
     uint256 reward; 
-    string[] proposals;
-    address[] proposers;
-    string fix;
-    bool pending;
-    bool resolved; 
-    uint256 projId;
+    string[] proposals;  //les propositions donnée par chaque dévloppeur
+    address[] proposers; // les dévloppeurs qui proposent une solution like overstackoverflow
+    string fix;     // solution
+    bool pending;   //déscion en attente
+    bool resolved;  //beug résolu
+    uint256 projId; // le projet a qui le beug est associer
   }
 
+// le projet on lui assosc
   struct Project{
     string name;
     address owner;
     address[] contributors;
     uint256 balance;
-    uint256 bugId;
   }
 
-
-  uint256 private pid = 0;
-
   mapping(address => User) private users;
-  mapping(address => Org) private orgs; 
+  mapping(address => Organisation) private orgs; 
   mapping(address => Project[]) private projects;
   mapping(address => Bug[]) private bugs;
 
-  address[] public userReg;
-
-
-  mapping(address => Org[]) private orgrefs; 
-  mapping(address => Project[]) private projectrefs; 
+  address[] public maListeUtilisateur; 
+  mapping(address => Organisation[]) private maListeOrg;  
+  mapping(address => Project[]) private maListeProject; 
 
 
 
   event UserSignedUp(address indexed userAddress, User indexed user);
-  event OrgSignedUp(address indexed ownerAddress, Org indexed org);
-  event ProjectCreated(address indexed ownerAddress, Project indexed project);
+  event OrgSignedUp(address indexed ownerAddress, Organisation indexed org);
+  event NewProject(address indexed ownerAddress, Project indexed project); 
 
 
 
-
-  function getUser(address _address) public view returns (User memory) {
+  //Récupérer l'utilisateur
+  function user(address _address) public view returns (User memory) {
     return users[_address];
   }
-  function getAllUsers() external view returns (address[] memory) {
-    return userReg;
-  }
 
-  function getOrg(address _address) public view returns (Org memory) {
+  //Récupérer l'organisation
+  function org(address _address) public view returns (Organisation memory) {
     return orgs[_address];
   }
-
-  function getProject(address _address) public view returns (Project[] memory){
+ //Récupérer le projet
+  function project(address _address) public view returns (Project[] memory){
     return projects[_address];
   }
 
-  function getBugs(address _address) public view returns (Bug[] memory){
+ //Récupérer le beug
+  function bug(address _address) public view returns (Bug[] memory){
     return bugs[_address];
   }
 
-  function getOrgRefs(address _address) public view returns (Org[] memory){
-    return orgrefs[_address];
+ //Récupérer ma liste d'utilisateurs
+  function getMaListeUtilisateur() external view returns (address[] memory) {
+    return maListeUtilisateur;
   }
-  function getProjectRefs(address _address) public view returns (Project[] memory){
-    return projectrefs[_address];
+
+  //Récupérer ma liste d'organisations
+  function getMaListeOrg(address _address) public view returns (Organisation[] memory){
+    return maListeOrg[_address];
+  }
+
+  //Récupérer ma liste de projets
+  function getMaListeProject(address _address) public view returns (Project[] memory){
+    return maListeProject[_address];
   }
 
 
 
   function signUp(string memory _name, uint256 _balance) public returns (User memory) {
-    require(bytes(_name).length > 0, "User Name Is Empty");
-    require(!listContains(userReg, msg.sender), "User Already Exists");
+    require(bytes(_name).length > 0, "username vide");
+    require(!ContainsElm(maListeUtilisateur, msg.sender), "username existe deja");
     users[msg.sender] = User(_name, _balance, true);
     emit UserSignedUp(msg.sender, users[msg.sender]);
-    userReg.push(msg.sender);
+    maListeUtilisateur.push(msg.sender);
     return users[msg.sender];
   }
 
-  function orgSignUp(string memory _name, address _owner, address[] memory _members, uint256 _balance) public returns (Org memory) {
-    require(users[msg.sender].registered, "User Not Found");
-    require(bytes(_name).length > 0, "Org Name Is Empty");
-    require(users[msg.sender].balance >= _balance, "Balace not Sufficient");
-    orgs[msg.sender] = Org(_name, _owner, _members, _balance);
+  function orgSignUp(string memory _name, address _owner, address[] memory _members, uint256 _balance) public returns (Organisation memory) {
+    require(users[msg.sender].registered, "utilisateur introuvable");
+    require(bytes(_name).length > 0, "nom de l'organisation est vide");
+    require(users[msg.sender].balance >= _balance, "pas assez d'argent dans le compte");
+    orgs[msg.sender] = Organisation(_name, _owner, _members, _balance);
     emit OrgSignedUp(msg.sender, orgs[msg.sender]);
     users[msg.sender].balance = users[msg.sender].balance - _balance;
     return orgs[msg.sender];
   }
 
-  function addProject(string memory _name, address _owner, address[] memory _contributors, uint256 _balance) public returns (Project memory) {
-    require(users[msg.sender].registered, "User Not Found");
-    require(bytes(_name).length > 0, "Project Name Is Empty");
-    require(users[msg.sender].balance >= _balance, "Balace not Sufficient");
-    Project memory proj = Project(_name, _owner, _contributors, _balance, pid);
-    pid++;
-    projects[msg.sender].push(proj);
-    emit ProjectCreated(msg.sender, proj);
-    users[msg.sender].balance = users[msg.sender].balance - _balance;
-    return proj;
-  }
+  
 
   function addBalance(uint256 amount) public returns (bool) {
-    require(users[msg.sender].registered, "User Not Found");
+    require(users[msg.sender].registered, "utilisateur introuvable");
     users[msg.sender].balance += amount;
     return true;
   }
 
-
+  //Vérifier si maListe contiens un element spécifique 
+  function ContainsElm(address[] memory l, address add) private returns(bool){ 
+      bool b = false;
+      for (uint i=0; i<l.length; i++) {
+          if(l[i] == add){b = true;}  
+      }
+      return b;
+    }
+  // ajouter un membre a notre entreprise 
   function addMember(address _member) public{
-    require(users[msg.sender].registered, "User Not Found");
-    require(users[_member].registered, "Member Not Found");
-    require(!listContains(orgs[msg.sender].members, _member), "Member Already Exists");
+    require(users[msg.sender].registered, "utilisateur introuvable");
+    require(users[_member].registered, "membre  introuvable");
+    require(!ContainsElm(orgs[msg.sender].members, _member), "membre existe deja");
     orgs[msg.sender].members.push(_member);
-    orgrefs[_member].push(orgs[msg.sender]);
+    maListeOrg[_member].push(orgs[msg.sender]);
   }
 
-  function addContributor(address _member, uint256 _idx) public{
-    require(users[msg.sender].registered, "User Not Found");
-    require(users[_member].registered, "Member Not Found");
-    require(!listContains(projects[msg.sender][_idx].contributors, _member), "Contributor Already Exists");
+  // ajouter un projet 
+  function addProject(string memory _name, address _owner, address[] memory _contributors, uint256 _balance) public returns (Project memory) {
+      require(users[msg.sender].registered, "utilisateur introuvable");
+      require(bytes(_name).length > 0, "Nom du projet est vide");
+      require(users[msg.sender].balance >= _balance, "pas assez d'argent dans le compte");
+      Project memory p = Project(_name, _owner, _contributors, _balance);
+      projects[msg.sender].push(p);
+      emit NewProject(msg.sender, p);
+      users[msg.sender].balance = users[msg.sender].balance - _balance;
+      return p;
+    }
+
+  // ajouter un contributors dans notre projet
+  function addContributeur(address _member, uint256 _idx) public{
+    require(users[msg.sender].registered, "utilisateur introuvable");
+    require(users[_member].registered, "membre  introuvable");
+    require(!ContainsElm(projects[msg.sender][_idx].contributors, _member), "contributeur existe deja");
     projects[msg.sender][_idx].contributors.push(_member);
-    projectrefs[_member].push(projects[msg.sender][_idx]);
+    maListeProject[_member].push(projects[msg.sender][_idx]);
   }
 
-  function donateProject(address _owner, uint256 _idx, uint256 _amount) public{
-    require(users[msg.sender].registered, "User Not Found");
-    require(users[msg.sender].balance >= _amount, "Balace not Sufficient");
+  //l'envoi de l'argent du projet aux contributors
+  function sendMoneyProject(address _owner, uint256 _idx, uint256 _amount) public{ 
+    require(users[msg.sender].registered, "utilisateur introuvable");
+    require(users[msg.sender].balance >= _amount, "pas assez d'argent dans le compte");
     projects[_owner][_idx].balance += _amount;
     users[msg.sender].balance = users[msg.sender].balance - _amount;
   }
 
 
-
-  function addBug(uint256 _bugid, string memory _title, string memory _description, uint256 _reward) public{
-    require(users[msg.sender].registered, "User Not Found");
-    require(users[msg.sender].balance >= _reward, "Balace not Sufficient");
+  //ajout d'un beug a notre projet
+  function addBug(string memory _title, string memory _description, uint256 _reward, uint256 _bugid) public{
+    require(users[msg.sender].registered, "utilisateur introuvable");
+    require(users[msg.sender].balance >= _reward, "pas assez d'argent dans le compte");
     string[] memory proposals;
     address[] memory proposers;
     string memory fix;
@@ -164,33 +178,27 @@ contract BuildCollective is Ownable {
     users[msg.sender].balance = users[msg.sender].balance - _reward; 
   }
 
-  function proposeFix(address _owner, uint256 _idx, string memory _fix) public{
+  // une proposition pour un beug  "non-vérifier"
+  function proposition(address _owner, uint256 _idx, string memory _fix) public{ 
     bugs[msg.sender][_idx].proposals.push(_fix); 
     bugs[msg.sender][_idx].proposers.push(msg.sender); 
     bugs[msg.sender][_idx].pending = true;
   }
 
-  function acceptFix(uint256 _idx, address _proposer) public{
+  // trouver l'index du beug 
+  function trouverIndex(address[] memory l, address add) private returns(uint256){
+    uint256 p = 0;
+    for (uint i=0; i<l.length; i++) {
+        if(l[i] == add){p = i;}  
+    }
+    return p;
+  }
+
+  // proposition accepté "résoulution du beug"
+  function accepteProposition(uint256 _idx, address _proposer) public{
     bugs[msg.sender][_idx].resolved = true; 
-    bugs[msg.sender][_idx].fix = bugs[msg.sender][_idx].proposals[findIdx(bugs[msg.sender][_idx].proposers, _proposer)];
+    bugs[msg.sender][_idx].fix = bugs[msg.sender][_idx].proposals[trouverIndex(bugs[msg.sender][_idx].proposers, _proposer)];
     users[_proposer].balance += bugs[msg.sender][_idx].reward;
-  }
-
-     
-
-  function listContains(address[] memory lst, address a) private returns(bool){
-    bool r = false;
-    for (uint i=0; i<lst.length; i++) {
-        if(lst[i] == a){r = true;}  
-    }
-    return r;
-  }
-  function findIdx(address[] memory lst, address a) private returns(uint256){
-    uint256 r = 0;
-    for (uint i=0; i<lst.length; i++) {
-        if(lst[i] == a){r = i;}  
-    }
-    return r;
   }
 
 }
