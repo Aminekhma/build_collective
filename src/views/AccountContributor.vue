@@ -18,7 +18,7 @@
       
       <div class="form">
         <div class="input_field">
-          <input type="text" v-model="nameMembers" placeholder = "Organisation name" name="name" class="input">
+          <input type="text" v-model="nameMembers" placeholder = "Contributor name" name="name" class="input">
           <i class="fas fa-user"></i>
         </div>
 
