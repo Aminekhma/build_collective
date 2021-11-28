@@ -1,23 +1,33 @@
 <template lang="html">
   <div class="home">
-    <form id="signup-from" style="border:1px solid #ccc">
-      <div class="container">
-            <h1> Ajouter des members </h1>
-            <p> veuillez saisir les informations </p>
+    <div class="wrapper">
+      <div class="title">
+        Ajouter des members
+      </div>
+      <div class="social_media">
+        <div class="item">
+          <i class="fab fa-facebook-f"></i>
+        </div>
+        <div class="item">
+          <i class="fab fa-twitter"></i>
+        </div>
+        <div class="item">
+          <i class="fab fa-google-plus-g"></i>
+        </div>
+      </div>
+      
+      <div class="form">
+        <div class="input_field">
+          <input type="text" v-model="nameMembers" placeholder = "Organisation name" name="name" class="input">
+          <i class="fas fa-user"></i>
+        </div>
 
-            <label for="name"><b>Name</b></label>
-            <input type="text" v-model="nameMembers" placeholder = "Members name" name="name"/>
+        <div class="btn" @click="submit()">
+          <a href="#">Create</a>
+        </div>
+      </div>
+    </div>
 
-            <div class="clearfix">
-                <button type="button" class="cancel" @click="goBack()">Cancel</button>
-                <button type="button" class="SignUp" @click="submit()">Sign Up</button>
-            </div>
-
-
-
-          
-     </div>
-    </form>
   </div>
 </template>
 
@@ -57,45 +67,106 @@ export default defineComponent({
 
 })
 </script>
-
 <style lang="css" scoped>
-.home {
-  padding: 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  max-width: 500px;
-  margin: auto;
-}
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    text-decoration: none;
+    font-family: 'Josefin Sans', sans-serif;
+  }
 
-.explanations {
-  padding: 12px;
-}
+  body{
+    background: #3aaf9f;
+  }
 
-.button-link {
-  display: inline;
-  appearance: none;
-  border: none;
-  background: none;
-  color: inherit;
-  text-decoration: underline;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-}
+  .wrapper{
+    max-width: 350px;
+    width: 100%;
+    height: auto;
+    background: #fff;
+    padding: 60px 45px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 20px;
+  }
 
-.input-username {
-  background: transparent;
-  border: none;
-  padding: 12px;
-  outline: none;
-  width: 100%;
-  color: white;
-  font-family: inherit;
-  font-size: 1.3rem;
-}
+  .wrapper .title{
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    color: #3aaf9f;
+  }
+
+  .wrapper .social_media{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .wrapper .social_media .item{
+    margin: 0 5px;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border: 2px solid #eeeeee;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #eeeeee;
+    transition: all 0.5s ease;
+  }
+
+  .wrapper .social_media .item:hover{
+    border: 2px solid #3aaf9f;
+    color: #3aaf9f;
+  }
+
+  .wrapper .form .input_field{
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .wrapper .form .input_field .input{
+    width: 100%;
+    padding: 12px;
+    padding-left: 30px;
+    border: none;
+    background: #eeeeee;
+  }
+
+  .wrapper .form .btn{
+    width: 70%;
+    margin: 20px auto 0;
+    background: #3aaf9f;
+    text-align: center;
+    padding: 12px;
+    border-radius: 25px;
+  }
+
+  .wrapper .form .btn a{
+    color: #fff;
+  }
+
+  .wrapper .form .input_field i{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 14px;
+    color: #1d2120;
+  }
+
+  ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: #1d2120;
+  }
+  ::-moz-placeholder { /* Firefox 19+ */
+  color: #1d2120;
+  }
+  :-ms-input-placeholder { /* IE 10+ */
+    color: #1d2120;
+  }
 </style>

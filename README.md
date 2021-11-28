@@ -4,14 +4,39 @@ Welcome to the DAAR project. The idea will be to implement an OpenCollective com
 in a decentralized way, on Ethereum. This will have cool side effects, like not
 be forced to pay for servers.
 
+>  ## Realized by :
+> * <b>Amine KHEDDAR</b> 
+> * <b>Sofiane BELKHIR</b>
+> * <b>David HERZOG</b>
+
+
+# Subject
+
+Implement an OpenCollective from scratch in Solidity.
+
+# Smart Contract
+
+><b>All the functionalities answering the points below will be present in the file ./contracts/BuildCollective.sol</b> 
+
+- Open user account, with a name and a balance.
+- Open an entreprise account, with a name, an owner and some members, possibly with a balance.
+- Create projects on which we can give money for sponsoring. Each project has a balance, a name and a list of contributors. Each project belongs to a user or an entreprise. The money given to the project can be send to contributors, and contributors only.
+- On a project, you should be able to create bounties. Bounties are bugs with a reward: if you spot a bug and you want to have it fix quickly, open a bounty and put some eth on it. When the fix is pushed, the author will get the eth. He’s a bounty hunter.
+- Add the ability to put some link to commits from GitHub or GitLab in the projects, to keep a track of what has been done.
+
+# Front
+
+- Create a page to open a user account. Remember, each user is identified by its wallet address.
+- Create a page to open an entreprise account.
+- Create a page to create a project.
+- Create a page to get a full recap of everything that happened on a project as a timeline.
+
 # Installation
 
 ```bash
-# With HTTPS
-git clone https://github.com/ghivert/build-collective.git
-# Or with SSH
-git clone git@github.com:ghivert/build-collective.git
+git clone https://github.com/Aminekhma/build_collective.git
 ```
+
 
 You’ll need to install dependencies. You’ll need [`Ganache`](https://www.trufflesuite.com/ganache), [`Node.js`](https://nodejs.org/en/) and [`NPM`](https://www.npmjs.com/) or [`Yarn`](https://yarnpkg.com/). You’ll need to install [`Metamask`](https://metamask.io/) as well to communicate with your blockchain.
 
