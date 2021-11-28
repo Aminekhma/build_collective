@@ -18,15 +18,15 @@ contract BuildCollective is Ownable {
   }
 
   struct Bug {
-    string title;
-    string description;
-    uint256 reward; 
-    string[] proposals;  //les propositions donnée par chaque dévloppeur
+    string BUG_title;
+    string BUG_description;
+    uint256 prize; 
+    string[] proposition;  //les propositions donnée par chaque dévloppeur
     address[] proposers; // les dévloppeurs qui proposent une solution like overstackoverflow
     string fix;     // solution
-    bool pending;   //déscion en attente
+    bool suspending;   //déscion en attente
     bool resolved;  //beug résolu
-    uint256 projId; // le projet a qui le beug est associer
+    uint256 project_ID; // le projet a qui le beug est associer
   }
 
 // le projet on lui assosc
@@ -167,24 +167,24 @@ contract BuildCollective is Ownable {
   //ajout d'un beug a notre projet
   //cette partie des bugs a était tester sur un éditeur spécial pour les tests units eutheruim
   //par contre on n'a pas eu le temps de faire un front avec des transaction
-  function addBug(string memory _title, string memory _description, uint256 _reward, uint256 _bugid) public{
+  function addBug(string memory _BUG_title, string memory _BUG_description, uint256 _prize, uint256 _bugid) public{
     require(users[msg.sender].registered, "utilisateur introuvable");
-    require(users[msg.sender].balance >= _reward, "pas assez d'argent dans le compte");
-    string[] memory proposals;
+    require(users[msg.sender].balance >= _prize, "pas assez d'argent dans le compte");
+    string[] memory proposition;
     address[] memory proposers;
     string memory fix;
-    bool  pending = false;
+    bool  suspending = false;
     bool resolved = false;
-    Bug memory bug = Bug(_title, _description, _reward, proposals, proposers, fix, pending, resolved, _bugid);
+    Bug memory bug = Bug(_BUG_title, _BUG_description, _prize, proposition, proposers, fix, suspending, resolved, _bugid);
     bugs[msg.sender].push(bug); 
-    users[msg.sender].balance = users[msg.sender].balance - _reward; 
+    users[msg.sender].balance = users[msg.sender].balance - _prize; 
   }
 
   // une proposition pour un beug  "non-vérifier"
   function proposition(address _owner, uint256 _idx, string memory _fix) public{ 
-    bugs[msg.sender][_idx].proposals.push(_fix); 
+    bugs[msg.sender][_idx].proposition.push(_fix); 
     bugs[msg.sender][_idx].proposers.push(msg.sender); 
-    bugs[msg.sender][_idx].pending = true;
+    bugs[msg.sender][_idx].suspending = true;
   }
 
   // trouver l'index du beug 
@@ -199,15 +199,15 @@ contract BuildCollective is Ownable {
   // proposition accepté "résoulution du beug"
   function accepteProposition(uint256 _idx, address _proposer) public{
     bugs[msg.sender][_idx].resolved = true; 
-    bugs[msg.sender][_idx].fix = bugs[msg.sender][_idx].proposals[trouverIndex(bugs[msg.sender][_idx].proposers, _proposer)];
-    users[_proposer].balance += bugs[msg.sender][_idx].reward;
+    bugs[msg.sender][_idx].fix = bugs[msg.sender][_idx].proposition[trouverIndex(bugs[msg.sender][_idx].proposers, _proposer)];
+    users[_proposer].balance += bugs[msg.sender][_idx].prize;
   }
 
    // une nouvelle adresse
    function getUniqueId() public view returns (address) 
     {
 
-        bytes20 b = bytes20(keccak256(msg.sender, now));
+        bytes20 b = bytes20(keccak256(abi.encodePacked(msg.sender, now)));
         uint addr = 0;
         for (uint index = b.length-1; index+1 > 0; index--) {
             addr += uint(b[index]) * ( 16 ** ((b.length - index - 1) * 2));
